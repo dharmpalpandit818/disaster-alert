@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title><%= alert ? 'Edit' : 'Create' %> Alert</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="admin-page">
+    <nav class="admin-nav">
+        <div class="logo">DisasterAlert Admin</div>
+        <div class="nav-links">
+            <a href="/admin/dashboard">Dashboard</a>
+            <a href="/admin/alerts" class="active">Alerts</a>
+            <a href="/admin/subscribers">Subscribers</a>
+            <a href="/admin/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <h1><%= alert ? 'Edit' : 'Create' %> Alert</h1>
+        
+        <% if (error) { %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+
+        <form action="<%= alert ? '/admin/alerts/edit/' + alert._id : '/admin/alerts/create' %>" method="POST">
+            <div class="form-group">
+                <label>Title *</label>
+                <input type="text" name="title" value="<%= alert?.title || '' %>" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Type *</label>
+                    <select name="type" required>
+                        <% types.forEach(type => { %>
+                            <option value="<%= type %>" <%= alert?.type === type ? 'selected' : '' %>><%= type %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Severity *</label>
+                    <select name="severity" required>
+                        <option value="Low" <%= alert?.severity === 'Low' ? 'selected' : '' %>>Low</option>
+                        <option value="Medium" <%= alert?.severity === 'Medium' ? 'selected' : '' %>>Medium</option>
+                        <option value="High" <%= alert?.severity === 'High' ? 'selected' : '' %>>High</option>
+                        <option value="Critical" <%= alert?.severity === 'Critical' ? 'selected' : '' %>>Critical</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Location *</label>
+                <input type="text" name="location" value="<%= alert?.location || '' %>" required placeholder="City, State, Country">
+            </div>
+
+            <div class="form-group">
+                <label>Description *</label>
+                <textarea name="description" rows="3" required><%= alert?.description || '' %></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Safety Instructions *</label>
+                <textarea name="safetyInstructions" rows="4" required><%= alert?.safetyInstructions || '' %></textarea>
+            </div>
+
+            <% if (alert) { %>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="isActive" <%= alert.isActive ? 'checked' : '' %>>
+                        Alert is active
+                    </label>
+                </div>
+            <% } %>
+
+            <button type="submit" class="btn btn-primary"><%= alert ? 'Update' : 'Create' %> Alert</button>
+            <a href="/admin/alerts" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

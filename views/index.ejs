@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Alert System</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- Navbar -->
+
+<nav class="navbar">
+    <div class="container">
+
+        <a href="/" class="logo">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>DisasterAlert</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="/" class="active"><i class="fas fa-home"></i> Home</a>
+            <a href="/alerts"><i class="fas fa-bell"></i> Alerts</a>
+            <a href="/safety"><i class="fas fa-shield-alt"></i> Safety</a>
+            <a href="/subscribe"><i class="fas fa-envelope"></i> Subscribe</a>
+        </div>
+
+        <div class="language-selector">
+            <select onchange="window.location.href='/lang/'+this.value">
+
+                <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
+                <option value="hi" <%= lang === 'hi' ? 'selected' : '' %>>हिन्दी</option>
+                <option value="bn" <%= lang === 'bn' ? 'selected' : '' %>>বাংলা</option>
+                <option value="mr" <%= lang === 'mr' ? 'selected' : '' %>>मराठी</option>
+                <option value="ta" <%= lang === 'ta' ? 'selected' : '' %>>தமிழ்</option>
+                <option value="te" <%= lang === 'te' ? 'selected' : '' %>>తెలుగు</option>
+
+            </select>
+        </div>
+
+    </div>
+</nav>
+
+
+<!-- Hero Section -->
+
+<section class="hero">
+
+    <div class="container">
+
+        <h1>Stay Safe from Natural Disasters</h1>
+
+        <p>
+            Get real time alerts and safety instructions
+            for floods, earthquakes, cyclones and more.
+        </p>
+
+        <a href="/alerts" class="btn btn-primary">
+            <i class="fas fa-bell"></i> View Alerts
+        </a>
+
+    </div>
+
+</section>
+
+
+
+<!-- Latest Alerts -->
+
+<section class="alerts-section">
+
+<div class="container">
+
+<h2>Latest Alerts</h2>
+
+<div class="alerts-grid">
+
+<% if(alerts && alerts.length > 0){ %>
+
+<% alerts.forEach(function(alert){ %>
+
+<div class="alert-card <%= alert.severity %>">
+
+<h3><%= alert.title %></h3>
+
+<p><%= alert.description %></p>
+
+<span class="location">
+<i class="fas fa-map-marker-alt"></i>
+<%= alert.location %>
+</span>
+
+</div>
+
+<% }) %>
+
+<% } else { %>
+
+<p>No alerts available</p>
+
+<% } %>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- Safety Guides -->
+
+<section class="safety-section">
+
+<div class="container">
+
+<h2>Safety Guides</h2>
+
+<div class="safety-grid">
+
+<a href="/safety/flood" class="guide-card">
+<i class="fas fa-water"></i>
+<h3>Flood</h3>
+</a>
+
+<a href="/safety/earthquake" class="guide-card">
+<i class="fas fa-house-crack"></i>
+<h3>Earthquake</h3>
+</a>
+
+<a href="/safety/fire" class="guide-card">
+<i class="fas fa-fire"></i>
+<h3>Fire</h3>
+</a>
+
+<a href="/safety/cyclone" class="guide-card">
+<i class="fas fa-wind"></i>
+<h3>Cyclone</h3>
+</a>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- Subscribe Section -->
+
+<section class="subscribe-section">
+
+<div class="container">
+
+<h2>Get Emergency Alerts</h2>
+
+<p>Subscribe to receive alerts by email</p>
+
+<a href="/subscribe" class="btn btn-primary">
+<i class="fas fa-envelope"></i> Subscribe Now
+</a>
+
+</div>
+
+</section>
+
+
+
+<!-- Footer -->
+
+<footer class="footer">
+
+<div class="container">
+
+<p>© 2024 Disaster Alert System | Stay Safe</p>
+
+<a href="/emergency">
+<i class="fas fa-phone"></i> Emergency Contacts
+</a>
+
+</div>
+
+</footer>
+
+
+</body>
+</html>

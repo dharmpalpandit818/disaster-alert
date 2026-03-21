@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>All Alerts</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="admin-page">
+    <nav class="admin-nav">
+        <div class="logo">DisasterAlert Admin</div>
+        <div class="nav-links">
+            <a href="/admin/dashboard">Dashboard</a>
+            <a href="/admin/alerts" class="active">Alerts</a>
+            <a href="/admin/subscribers">Subscribers</a>
+            <a href="/admin/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <h1>All Alerts <a href="/admin/alerts/create" class="btn btn-primary" style="float: right;">+ Create Alert</a></h1>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% alerts.forEach(alert => { %>
+                    <tr>
+                        <td><%= alert.title %></td>
+                        <td><%= alert.type %></td>
+                        <td><%= alert.location %></td>
+                        <td><%= alert.severity %></td>
+                        <td><%= alert.isActive ? 'Active' : 'Inactive' %></td>
+                        <td>
+                            <a href="/admin/alerts/edit/<%= alert._id %>" class="btn-small">Edit</a>
+                            <form action="/admin/alerts/delete/<%= alert._id %>" method="POST" style="display:inline;" onsubmit="return confirm('Delete?');">
+                                <button type="submit" class="btn-small btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

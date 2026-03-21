@@ -1,0 +1,67 @@
+<div class="container">
+    <div class="guide-header">
+        <i class="fas fa-<%= getIcon(type) %>"></i>
+        <h1><%= type %> <%= t.safety.title %></h1>
+    </div>
+    
+    <div class="guide-content">
+        <div class="guide-phase">
+            <div class="phase-header before">
+                <i class="fas fa-clipboard-check"></i>
+                <h2><%= t.safety.before %></h2>
+            </div>
+            <div class="phase-content">
+                <%- formatContent(guide.content.before[lang] || guide.content.before.en) %>
+            </div>
+        </div>
+        
+        <div class="guide-phase">
+            <div class="phase-header during">
+                <i class="fas fa-running"></i>
+                <h2><%= t.safety.during %></h2>
+            </div>
+            <div class="phase-content">
+                <%- formatContent(guide.content.during[lang] || guide.content.during.en) %>
+            </div>
+        </div>
+        
+        <div class="guide-phase">
+            <div class="phase-header after">
+                <i class="fas fa-hands-helping"></i>
+                <h2><%= t.safety.after %></h2>
+            </div>
+            <div class="phase-content">
+                <%- formatContent(guide.content.after[lang] || guide.content.after.en) %>
+            </div>
+        </div>
+    </div>
+    
+    <a href="/safety" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> All Guides
+    </a>
+</div>
+
+<% 
+function getIcon(type) {
+    const icons = {
+        'Flood': 'water',
+        'Earthquake': 'house-damage',
+        'Cyclone': 'wind',
+        'Fire': 'fire',
+        'Landslide': 'mountain',
+        'Heatwave': 'temperature-high',
+        'Tsunami': 'water-rise'
+    };
+    return icons[type] || 'exclamation-circle';
+}
+
+function formatContent(text) {
+    if (!text) return '';
+    return text.split('\n').map(line => {
+        if (line.trim().startsWith('•')) {
+            return `<li>${line.trim().substring(1).trim()}</li>`;
+        }
+        return `<p>${line}</p>`;
+    }).join('').replace(/<li>/, '<ul><li>').replace(/<\/li>$/, '</li></ul>');
+}
+%>

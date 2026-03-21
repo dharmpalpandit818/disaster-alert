@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerts - Disaster Alert System</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>DisasterAlert</span>
+            </a>
+            <div class="nav-links">
+                <a href="/"><i class="fas fa-home"></i> Home</a>
+                <a href="/alerts" class="active"><i class="fas fa-bell"></i> Alerts</a>
+                <a href="/safety"><i class="fas fa-shield-alt"></i> Safety</a>
+                <a href="/subscribe"><i class="fas fa-envelope"></i> Subscribe</a>
+            </div>
+            <div class="language-selector">
+                <select onchange="window.location.href='/lang/'+this.value">
+                    <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
+                    <option value="hi" <%= lang === 'hi' ? 'selected' : '' %>>हिन्दी</option>
+                    <option value="bn" <%= lang === 'bn' ? 'selected' : '' %>>বাংলা</option>
+                    <option value="te" <%= lang === 'te' ? 'selected' : '' %>>తెలుగు</option>
+                    <option value="mr" <%= lang === 'mr' ? 'selected' : '' %>>मराठी</option>
+                    <option value="ta" <%= lang === 'ta' ? 'selected' : '' %>>தமிழ்</option>
+                    <option value="gu" <%= lang === 'gu' ? 'selected' : '' %>>ગુજરાતી</option>
+                    <option value="kn" <%= lang === 'kn' ? 'selected' : '' %>>ಕನ್ನಡ</option>
+                    <option value="ml" <%= lang === 'ml' ? 'selected' : '' %>>മലയാളം</option>
+                    <option value="pa" <%= lang === 'pa' ? 'selected' : '' %>>ਪੰਜਾਬੀ</option>
+                    <option value="or" <%= lang === 'or' ? 'selected' : '' %>>ଓଡ଼ିଆ</option>
+                    <option value="as" <%= lang === 'as' ? 'selected' : '' %>>অসমীয়া</option>
+                    <option value="ur" <%= lang === 'ur' ? 'selected' : '' %>>اردو</option>
+                    <option value="sa" <%= lang === 'sa' ? 'selected' : '' %>>संस्कृतम्</option>
+                    <option value="kok" <%= lang === 'kok' ? 'selected' : '' %>>कोंकणी</option>
+                    <option value="es" <%= lang === 'es' ? 'selected' : '' %>>Español</option>
+                    <option value="fr" <%= lang === 'fr' ? 'selected' : '' %>>Français</option>
+                    <option value="ar" <%= lang === 'ar' ? 'selected' : '' %>>العربية</option>
+                    <option value="zh" <%= lang === 'zh' ? 'selected' : '' %>>中文</option>
+                    <option value="ru" <%= lang === 'ru' ? 'selected' : '' %>>Русский</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <h2 class="section-title"><i class="fas fa-bell"></i> <%= t.alerts?.title || 'Disaster Alerts' %></h2>
+        
+        <% if (alerts && alerts.length > 0) { %>
+            <div class="alerts-list">
+                <% alerts.forEach(alert => { %>
+                    <div class="alert-item <%= alert.severity.toLowerCase() %>">
+                        <div class="alert-severity-badge <%= alert.severity.toLowerCase() %>">
+                            <%= alert.severity %>
+                        </div>
+                        <div class="alert-content">
+                            <h3><%= alert.titleTranslations?.[lang] || alert.title %></h3>
+                            <div class="alert-meta">
+                                <span><i class="fas fa-<%= getIcon(alert.type) %>"></i> <%= alert.type %></span>
+                                <span><i class="fas fa-map-marker-alt"></i> <%= alert.location %></span>
+                                <span><i class="fas fa-clock"></i> <%= alert.createdAt.toLocaleDateString() %></span>
+                            </div>
+                            <p><%= alert.descriptionTranslations?.[lang] || alert.description %></p>
+                        </div>
+                        <a href="/alerts/<%= alert._id %>" class="btn btn-primary">
+                            <%= t.alerts?.details || 'View Details' %>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="empty-state">
+                <i class="fas fa-check-circle"></i>
+                <p><%= t.alerts?.noAlerts || 'No active alerts' %></p>
+            </div>
+        <% } %>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Disaster Alert System. Stay Safe!</p>
+            <a href="/emergency"><i class="fas fa-phone"></i> Emergency</a>
+        </div>
+    </footer>
+</body>
+</html>
+
+<% function getIcon(type) {
+    const icons = {
+        'Flood': 'water',
+        'Earthquake': 'house-damage',
+        'Cyclone': 'wind',
+        'Fire': 'fire',
+        'Landslide': 'mountain',
+        'Heatwave': 'sun',
+        'Tsunami': 'water'
+    };
+    return icons[type] || 'exclamation-circle';
+} %>

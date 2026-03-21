@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= type %> Safety Guide - Disaster Alert System</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>DisasterAlert</span>
+            </a>
+            <div class="nav-links">
+                <a href="/"><i class="fas fa-home"></i> Home</a>
+                <a href="/alerts"><i class="fas fa-bell"></i> Alerts</a>
+                <a href="/safety" class="active"><i class="fas fa-shield-alt"></i> Safety</a>
+                <a href="/subscribe"><i class="fas fa-envelope"></i> Subscribe</a>
+            </div>
+            <div class="language-selector">
+                <select onchange="window.location.href='/lang/'+this.value">
+                    <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
+                    <option value="hi" <%= lang === 'hi' ? 'selected' : '' %>>हिन्दी</option>
+                    <option value="bn" <%= lang === 'bn' ? 'selected' : '' %>>বাংলা</option>
+                    <option value="te" <%= lang === 'te' ? 'selected' : '' %>>తెలుగు</option>
+                    <option value="mr" <%= lang === 'mr' ? 'selected' : '' %>>मराठी</option>
+                    <option value="ta" <%= lang === 'ta' ? 'selected' : '' %>>தமிழ்</option>
+                    <option value="gu" <%= lang === 'gu' ? 'selected' : '' %>>ગુજરાતી</option>
+                    <option value="kn" <%= lang === 'kn' ? 'selected' : '' %>>ಕನ್ನಡ</option>
+                    <option value="ml" <%= lang === 'ml' ? 'selected' : '' %>>മലയാളം</option>
+                    <option value="pa" <%= lang === 'pa' ? 'selected' : '' %>>ਪੰਜਾਬੀ</option>
+                    <option value="or" <%= lang === 'or' ? 'selected' : '' %>>ଓଡ଼ିଆ</option>
+                    <option value="as" <%= lang === 'as' ? 'selected' : '' %>>অসমীয়া</option>
+                    <option value="ur" <%= lang === 'ur' ? 'selected' : '' %>>اردو</option>
+                    <option value="sa" <%= lang === 'sa' ? 'selected' : '' %>>संस्कृतम्</option>
+                    <option value="kok" <%= lang === 'kok' ? 'selected' : '' %>>कोंकणी</option>
+                    <option value="es" <%= lang === 'es' ? 'selected' : '' %>>Español</option>
+                    <option value="fr" <%= lang === 'fr' ? 'selected' : '' %>>Français</option>
+                    <option value="ar" <%= lang === 'ar' ? 'selected' : '' %>>العربية</option>
+                    <option value="zh" <%= lang === 'zh' ? 'selected' : '' %>>中文</option>
+                    <option value="ru" <%= lang === 'ru' ? 'selected' : '' %>>Русский</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <div class="guide-header-page">
+            <i class="fas fa-<%= safetyData.icon %>"></i>
+            <h1><%= type %> Safety Guide</h1>
+        </div>
+
+        <div class="guide-phases">
+            <!-- Before -->
+            <div class="phase-card before">
+                <div class="phase-header">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h2>Before</h2>
+                </div>
+                <div class="phase-content">
+                    <ul>
+                        <% safetyData.before.forEach(function(item) { %>
+                            <li><i class="fas fa-check"></i> <%= item %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- During -->
+            <div class="phase-card during">
+                <div class="phase-header">
+                    <i class="fas fa-running"></i>
+                    <h2>During</h2>
+                </div>
+                <div class="phase-content">
+                    <ul>
+                        <% safetyData.during.forEach(function(item) { %>
+                            <li><i class="fas fa-exclamation"></i> <%= item %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- After -->
+            <div class="phase-card after">
+                <div class="phase-header">
+                    <i class="fas fa-hands-helping"></i>
+                    <h2>After</h2>
+                </div>
+                <div class="phase-content">
+                    <ul>
+                        <% safetyData.after.forEach(function(item) { %>
+                            <li><i class="fas fa-check-circle"></i> <%= item %></li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <a href="/safety" class="btn btn-secondary back-btn">
+            <i class="fas fa-arrow-left"></i> All Guides
+        </a>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Disaster Alert System. Stay Safe!</p>
+            <a href="/emergency"><i class="fas fa-phone"></i> Emergency</a>
+        </div>
+    </footer>
+</body>
+</html>

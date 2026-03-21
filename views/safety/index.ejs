@@ -1,0 +1,28 @@
+<div class="container">
+    <h1><i class="fas fa-shield-alt"></i> <%= t.safety.title %></h1>
+    
+    <div class="safety-grid">
+        <% disasterTypes.forEach(type => { %>
+            <a href="/safety/<%= type %>" class="safety-card">
+                <div class="safety-icon <%= type.toLowerCase() %>">
+                    <i class="fas fa-<%= getIcon(type) %>"></i>
+                </div>
+                <h3><%= type %></h3>
+                <p><%= t.safety.readMore %> <i class="fas fa-arrow-right"></i></p>
+            </a>
+        <% }); %>
+    </div>
+</div>
+
+<% function getIcon(type) {
+    const icons = {
+        'Flood': 'water',
+        'Earthquake': 'house-damage',
+        'Cyclone': 'wind',
+        'Fire': 'fire',
+        'Landslide': 'mountain',
+        'Heatwave': 'temperature-high',
+        'Tsunami': 'water-rise'
+    };
+    return icons[type] || 'exclamation-circle';
+} %>

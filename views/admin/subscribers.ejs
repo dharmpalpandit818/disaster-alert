@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Subscribers</title>
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="admin-page">
+    <nav class="admin-nav">
+        <div class="logo">DisasterAlert Admin</div>
+        <div class="nav-links">
+            <a href="/admin/dashboard">Dashboard</a>
+            <a href="/admin/alerts">Alerts</a>
+            <a href="/admin/subscribers" class="active">Subscribers</a>
+            <a href="/admin/logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <h1>Subscribers (<%= subscribers.length %>)</h1>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Language</th>
+                    <th>Location</th>
+                    <th>Subscribed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% subscribers.forEach(sub => { %>
+                    <tr>
+                        <td><%= sub.email %></td>
+                        <td><%= sub.phone || '-' %></td>
+                        <td><%= sub.preferredLanguage %></td>
+                        <td><%= sub.location?.city || '-' %></td>
+                        <td><%= sub.subscribedAt.toLocaleDateString() %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
