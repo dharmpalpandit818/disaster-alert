@@ -2,48 +2,51 @@ const express = require('express');
 const router = express.Router();
 const Alert = require('../models/Alert');
 const Subscriber = require('../models/Subscriber');
-const translations = require('../utils/translations');
+const { translateText } = require('../utils/translation');
 
-// Home page
 router.get('/', async (req, res) => {
-  const lang = req.session.lang || 'en';
+  const lang = res.locals.lang || req.session.lang || 'en';
+  const t = res.locals.t;
+
   try {
-    const alerts = await Alert.find({ isActive: true }).sort({ createdAt: -1 }).limit(5);
-    res.render('index', { 
-      alerts, 
-      lang,
-      t: translations[lang] || translations.en,
-      translations: translations
-    });
+    const raw = await Alert.find({ isActive: true }).sort({ createdAt: -1 }).limit(5);
+    const alerts = await Promise.all(
+      raw.map(async (a) => {
+        const o = a.toObject();
+        if (!lang || lang === 'en') {
+          return {
+            ...o,
+            severityClass: String(o.severity || '').toLowerCase(),
+            typeKey: o.type
+          };
+        }
+        const [title, description, location] = await Promise.all([
+          translateText(o.title, lang),
+          translateText(o.description, lang),
+          translateText(o.location, lang)
+        ]);
+        return {
+          ...o,
+          title: title || o.title,
+          description: description || o.description,
+          location: location || o.location,
+          severityClass: String(o.severity || '').toLowerCase(),
+          typeKey: o.type
+        };
+      })
+    );
+    res.render('index', { alerts, lang, t });
   } catch (error) {
-    res.render('index', { 
-      alerts: [], 
-      lang,
-      t: translations[lang] || translations.en,
-      translations: translations
-    });
+    console.error(error);
+    res.render('index', { alerts: [], lang, t });
   }
 });
 
-// Language change
-router.get('/lang/:code', (req, res) => {
-  req.session.lang = req.params.code;
-  res.redirect('back');
-});
-
-// Subscribe page
 router.get('/subscribe', (req, res) => {
-  const lang = req.session.lang || 'en';
-  res.render('subscribe', { 
-    lang, 
-    t: translations[lang] || translations.en,
-    message: null 
-  });
+  res.render('subscribe', { message: null, lang: res.locals.lang, t: res.locals.t });
 });
 
-// Handle subscribe
 router.post('/subscribe', async (req, res) => {
-  const lang = req.session.lang || 'en';
   try {
     const subscriber = new Subscriber({
       email: req.body.email,
@@ -52,28 +55,19 @@ router.post('/subscribe', async (req, res) => {
       location: { city: req.body.city, state: req.body.state }
     });
     await subscriber.save();
-    res.render('subscribe', { 
-      lang, 
-      t: translations[lang] || translations.en,
-      message: 'success' 
-    });
+    res.render('subscribe', { message: 'success', lang: res.locals.lang, t: res.locals.t });
   } catch (error) {
-    res.render('subscribe', { 
-      lang, 
-      t: translations[lang] || translations.en,
-      message: 'error', 
-      error: error.message 
+    res.render('subscribe', {
+      message: 'error',
+      error: error.message,
+      lang: res.locals.lang,
+      t: res.locals.t
     });
   }
 });
 
-// Emergency page
 router.get('/emergency', (req, res) => {
-  const lang = req.session.lang || 'en';
-  res.render('emergency', { 
-    lang, 
-    t: translations[lang] || translations.en 
-  });
+  res.render('emergency', { lang: res.locals.lang, t: res.locals.t });
 });
 
 module.exports = router;

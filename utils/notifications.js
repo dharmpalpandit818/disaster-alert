@@ -1,10 +1,77 @@
+require('dotenv').config();
+
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
+const { translateText } = require('./translation');
 
-// Email configuration
+const EN_EMAIL_LABELS = {
+  subjectPrefix: 'DISASTER ALERT:',
+  heading: 'Disaster Alert',
+  type: 'Type',
+  severity: 'Severity',
+  location: 'Location',
+  description: 'Description',
+  safetyTitle: 'Safety instructions',
+  viewDetails: 'View details'
+};
+
+const EN_WA_LABELS = {
+  heading: 'DISASTER ALERT',
+  type: 'Type',
+  severity: 'Severity',
+  location: 'Location',
+  staySafe: 'Stay safe!'
+};
+
+function recipientLang(recipient) {
+  return recipient.preferredLanguage || recipient.language || 'en';
+}
+
+/**
+ * Translate alert fields for outbound messages. Falls back to English on failure (translateText already returns original text on error).
+ */
+async function translateAlertFields(alert, lang) {
+  const base = {
+    title: alert.title,
+    description: alert.description,
+    location: alert.location,
+    safetyInstructions: alert.safetyInstructions,
+    type: String(alert.type),
+    severity: String(alert.severity)
+  };
+  if (!lang || lang === 'en') {
+    return base;
+  }
+  const [title, description, location, safetyInstructions, type, severity] = await Promise.all([
+    translateText(alert.title, lang),
+    translateText(alert.description, lang),
+    translateText(alert.location, lang),
+    translateText(alert.safetyInstructions, lang),
+    translateText(String(alert.type), lang),
+    translateText(String(alert.severity), lang)
+  ]);
+  return {
+    title: title || base.title,
+    description: description || base.description,
+    location: location || base.location,
+    safetyInstructions: safetyInstructions || base.safetyInstructions,
+    type: type || base.type,
+    severity: severity || base.severity
+  };
+}
+
+async function translateLabelObject(labels, lang) {
+  if (!lang || lang === 'en') {
+    return labels;
+  }
+  const entries = Object.entries(labels);
+  const values = await Promise.all(entries.map(([, v]) => translateText(v, lang)));
+  return Object.fromEntries(entries.map(([k], i) => (values[i] ? [k, values[i]] : [k, labels[k]])));
+}
+
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-  port: process.env.EMAIL_PORT || 587,
+  port: Number(process.env.EMAIL_PORT) || 587,
   secure: false,
   auth: {
     user: process.env.EMAIL_USER,
@@ -12,156 +79,120 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Twilio configuration
-const twilioClient = process.env.TWILIO_ACCOUNT_SID ? 
-  twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN) : 
-  null;
+const twilioClient = process.env.TWILIO_ACCOUNT_SID
+  ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
+  : null;
 
-// Send email alert
 async function sendEmailAlert(alert, subscriber) {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.log('⚠️ Email not configured. Skipping email notification.');
+    console.log('Email not configured.');
     return { success: false, error: 'Email not configured' };
   }
 
   try {
-    const lang = subscriber.preferredLanguage || 'en';
-    const title = alert.titleTranslations?.[lang] || alert.title;
-    const description = alert.descriptionTranslations?.[lang] || alert.description;
-    const safetyInstructions = alert.safetyTranslations?.[lang] || alert.safetyInstructions;
+    const lang = recipientLang(subscriber);
+    const content = await translateAlertFields(alert, lang);
+    const labels = await translateLabelObject(EN_EMAIL_LABELS, lang);
 
     const mailOptions = {
       from: `"Disaster Alert System" <${process.env.EMAIL_USER}>`,
       to: subscriber.email,
-      subject: `🚨 DISASTER ALERT: ${title}`,
+      subject: `🚨 ${labels.subjectPrefix} ${content.title}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 2px solid #dc3545; border-radius: 10px;">
-          <h1 style="color: #dc3545; text-align: center;">⚠️ DISASTER ALERT</h1>
-          <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <h2 style="color: #856404; margin-top: 0;">${title}</h2>
-            <p><strong>Type:</strong> ${alert.type}</p>
-            <p><strong>Severity:</strong> <span style="color: ${getSeverityColor(alert.severity)}; font-weight: bold;">${alert.severity}</span></p>
-            <p><strong>Location:</strong> ${alert.location}</p>
-          </div>
-          
-          <div style="margin: 20px 0;">
-            <h3>Description:</h3>
-            <p>${description}</p>
-          </div>
-          
-          <div style="background-color: #d4edda; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <h3 style="color: #155724; margin-top: 0;">🛡️ Safety Instructions:</h3>
-            <p>${safetyInstructions}</p>
-          </div>
-          
-          <div style="text-align: center; margin-top: 30px;">
-            <a href="${process.env.SITE_URL || 'http://localhost:3000'}/alerts/${alert._id}" 
-               style="background-color: #007bff; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
-              View Full Details
-            </a>
-          </div>
-          
-          <hr style="margin: 30px 0; border: none; border-top: 1px solid #dee2e6;">
-          <p style="color: #6c757d; font-size: 12px; text-align: center;">
-            You received this alert because you subscribed to Disaster Alert System.<br>
-            <a href="${process.env.SITE_URL || 'http://localhost:3000'}/unsubscribe?email=${subscriber.email}">Unsubscribe</a>
-          </p>
+        <div style="font-family: Arial, sans-serif; padding:20px;">
+          <h2>🚨 ${labels.heading}</h2>
+          <h3>${content.title}</h3>
+          <p><b>${labels.type}:</b> ${content.type}</p>
+          <p><b>${labels.severity}:</b> ${content.severity}</p>
+          <p><b>${labels.location}:</b> ${content.location}</p>
+
+          <h4>${labels.description}</h4>
+          <p>${content.description}</p>
+
+          <h4>${labels.safetyTitle}</h4>
+          <p>${content.safetyInstructions}</p>
+
+          <a href="${process.env.SITE_URL || 'http://localhost:3000'}/alerts/${alert._id}">
+            ${labels.viewDetails}
+          </a>
         </div>
       `
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ Email sent to ${subscriber.email}: ${info.messageId}`);
-    return { success: true, messageId: info.messageId };
+    console.log(`Email sent: ${info.messageId}`);
+
+    return { success: true };
   } catch (error) {
-    console.error(`❌ Email failed to ${subscriber.email}:`, error.message);
+    console.error('Email error:', error.message);
     return { success: false, error: error.message };
   }
 }
 
-// Send WhatsApp alert
 async function sendWhatsAppAlert(alert, subscriber) {
   if (!twilioClient || !process.env.TWILIO_PHONE_NUMBER) {
-    console.log('⚠️ Twilio not configured. Skipping WhatsApp notification.');
+    console.log('Twilio not configured.');
     return { success: false, error: 'Twilio not configured' };
   }
 
-  if (!subscriber.phone || !subscriber.whatsappEnabled) {
-    return { success: false, error: 'No phone number or WhatsApp not enabled' };
+  if (!subscriber.phone) {
+    return { success: false, error: 'No phone number' };
   }
 
   try {
-    const lang = subscriber.preferredLanguage || 'en';
-    const title = alert.titleTranslations?.[lang] || alert.title;
-    
+    const lang = recipientLang(subscriber);
+    const content = await translateAlertFields(alert, lang);
+    const labels = await translateLabelObject(EN_WA_LABELS, lang);
+
     const message = `
-🚨 *DISASTER ALERT*
+${labels.heading}
 
-*${title}*
-Type: ${alert.type}
-Severity: ${alert.severity}
-Location: ${alert.location}
+${content.title}
+${labels.type}: ${content.type}
+${labels.severity}: ${content.severity}
+${labels.location}: ${content.location}
 
-Stay safe! Check email for details.
-    `;
+${labels.staySafe}
+`.trim();
+
+    const raw = subscriber.phone.trim();
+    const phone = raw.startsWith('+') ? raw : `+${raw.replace(/^\+/, '')}`;
 
     const response = await twilioClient.messages.create({
       body: message,
       from: process.env.TWILIO_PHONE_NUMBER,
-      to: `whatsapp:${subscriber.phone}`
+      to: `whatsapp:${phone}`
     });
 
-    console.log(`✅ WhatsApp sent to ${subscriber.phone}: ${response.sid}`);
-    return { success: true, messageId: response.sid };
+    console.log(`WhatsApp sent: ${response.sid}`);
+
+    return { success: true };
   } catch (error) {
-    console.error(`❌ WhatsApp failed to ${subscriber.phone}:`, error.message);
+    console.error('WhatsApp error:', error.message);
     return { success: false, error: error.message };
   }
 }
 
-// Helper function for severity colors
-function getSeverityColor(severity) {
-  const colors = {
-    'Low': '#28a745',
-    'Medium': '#ffc107',
-    'High': '#fd7e14',
-    'Critical': '#dc3545'
-  };
-  return colors[severity] || '#6c757d';
-}
-
-// Send alert to all subscribers
 async function broadcastAlert(alert, subscribers) {
   const results = {
-    email: { sent: 0, failed: 0, errors: [] },
-    whatsapp: { sent: 0, failed: 0, errors: [] }
+    email: { sent: 0, failed: 0 },
+    whatsapp: { sent: 0, failed: 0 }
   };
 
   for (const subscriber of subscribers) {
-    // Send Email
     if (subscriber.email) {
       const emailResult = await sendEmailAlert(alert, subscriber);
-      if (emailResult.success) {
-        results.email.sent++;
-      } else {
-        results.email.failed++;
-        results.email.errors.push({ email: subscriber.email, error: emailResult.error });
-      }
+      emailResult.success ? results.email.sent++ : results.email.failed++;
     }
 
-    // Send WhatsApp
-    if (subscriber.whatsappEnabled && subscriber.phone) {
+    if (subscriber.phone) {
       const waResult = await sendWhatsAppAlert(alert, subscriber);
-      if (waResult.success) {
-        results.whatsapp.sent++;
-      } else {
-        results.whatsapp.failed++;
-        results.whatsapp.errors.push({ phone: subscriber.phone, error: waResult.error });
-      }
+      waResult.success ? results.whatsapp.sent++ : results.whatsapp.failed++;
     }
   }
 
-  console.log(`📊 Broadcast complete: ${results.email.sent} emails, ${results.whatsapp.sent} WhatsApp messages sent`);
+  console.log('Notification broadcast results:', results);
+
   return results;
 }
 

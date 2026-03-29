@@ -1,28 +1,33 @@
-<div class="container">
-    <h1><i class="fas fa-shield-alt"></i> <%= t.safety.title %></h1>
-    
+<!DOCTYPE html>
+<html lang="<%= lang %>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= t.safety.title %> — <%= t.meta.siteTitle %></title>
+    <link rel="shortcut icon" href="https://img.freepik.com/free-vector/globe-fire-melting_78370-7954.jpg?semt=ais_hybrid&w=740&q=80" type="image/x-icon">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+<div class="container main-content">
+    <h1 class="section-title"><i class="fas fa-shield-alt"></i> <%= t.safety.title %></h1>
+    <% const labels = { Flood: t.home.flood, Earthquake: t.home.earthquake, Cyclone: t.home.cyclone, Fire: t.home.fire, Landslide: t.home.landslide, Heatwave: t.home.heatwave, Tsunami: t.home.tsunami }; %>
     <div class="safety-grid">
-        <% disasterTypes.forEach(type => { %>
-            <a href="/safety/<%= type %>" class="safety-card">
-                <div class="safety-icon <%= type.toLowerCase() %>">
-                    <i class="fas fa-<%= getIcon(type) %>"></i>
+        <% disasterTypes.forEach(function(type) { %>
+            <a href="/safety/<%= type %>" class="safety-card <%= type.toLowerCase() %>">
+                <div class="safety-card-visual">
+                    <%- include('../partials/disaster-photo', { disasterType: type, imgClass: 'safety-card-bg-img' }) %>
+                    <div class="safety-icon"><i class="fas fa-<%= getAlertFaIcon(type) %>"></i></div>
                 </div>
-                <h3><%= type %></h3>
-                <p><%= t.safety.readMore %> <i class="fas fa-arrow-right"></i></p>
+                <h3><%= labels[type] || type %></h3>
+                <p class="safety-read-more"><%= t.safety.readMore %> <i class="fas fa-arrow-right"></i></p>
             </a>
         <% }); %>
     </div>
 </div>
 
-<% function getIcon(type) {
-    const icons = {
-        'Flood': 'water',
-        'Earthquake': 'house-damage',
-        'Cyclone': 'wind',
-        'Fire': 'fire',
-        'Landslide': 'mountain',
-        'Heatwave': 'temperature-high',
-        'Tsunami': 'water-rise'
-    };
-    return icons[type] || 'exclamation-circle';
-} %>
+<%- include('../partials/footer') %>
+</body>
+</html>

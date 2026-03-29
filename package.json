@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "22.19.0"
+  },
   "name": "disaster-alert-system",
   "version": "1.0.0",
   "description": "Multilingual Disaster Alert System",

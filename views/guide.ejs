@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= type %> Safety Guide - Disaster Alert System</title>
+    <link rel="shortcut icon" href="https://img.freepik.com/free-vector/globe-fire-melting_78370-7954.jpg?semt=ais_hybrid&w=740&q=80" type="image/x-icon">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -50,7 +51,7 @@
 
     <div class="container main-content">
         <div class="guide-header-page">
-            <i class="fas fa-<%= safetyData.icon %>"></i>
+            <i class="fas fa-<%= guide.icon %>"></i>
             <h1><%= type %> Safety Guide</h1>
         </div>
 
@@ -63,7 +64,7 @@
                 </div>
                 <div class="phase-content">
                     <ul>
-                        <% safetyData.before.forEach(function(item) { %>
+                        <% guide.before.forEach(function(item) { %>
                             <li><i class="fas fa-check"></i> <%= item %></li>
                         <% }); %>
                     </ul>
@@ -78,7 +79,7 @@
                 </div>
                 <div class="phase-content">
                     <ul>
-                        <% safetyData.during.forEach(function(item) { %>
+                        <% guide.during.forEach(function(item) { %>
                             <li><i class="fas fa-exclamation"></i> <%= item %></li>
                         <% }); %>
                     </ul>
@@ -93,7 +94,7 @@
                 </div>
                 <div class="phase-content">
                     <ul>
-                        <% safetyData.after.forEach(function(item) { %>
+                        <% guide.after.forEach(function(item) { %>
                             <li><i class="fas fa-check-circle"></i> <%= item %></li>
                         <% }); %>
                     </ul>

@@ -1,60 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= lang %>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emergency - Disaster Alert</title>
+    <title><%= t.emergency.title %> — <%= t.meta.siteTitle %></title>
+    <link rel="shortcut icon" href="https://img.freepik.com/free-vector/globe-fire-melting_78370-7954.jpg?semt=ais_hybrid&w=740&q=80" type="image/x-icon">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <a href="/" class="logo">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span>DisasterAlert</span>
-            </a>
-            <div class="nav-links">
-                <a href="/"><i class="fas fa-home"></i> Home</a>
-                <a href="/alerts"><i class="fas fa-bell"></i> Alerts</a>
-                <a href="/safety"><i class="fas fa-shield-alt"></i> Safety</a>
-                <a href="/subscribe"><i class="fas fa-envelope"></i> Subscribe</a>
-            </div>
-        </div>
-    </nav>
+<%- include('partials/navbar') %>
 
-    <div class="container main-content">
-        <h2 class="section-title"><i class="fas fa-phone"></i> Emergency Contacts</h2>
-        
-        <div class="emergency-grid">
-            <div class="emergency-card police">
-                <i class="fas fa-shield-alt"></i>
-                <h3>Police</h3>
-                <p>100</p>
-            </div>
-            <div class="emergency-card fire">
-                <i class="fas fa-fire-extinguisher"></i>
-                <h3>Fire</h3>
-                <p>101</p>
-            </div>
-            <div class="emergency-card ambulance">
-                <i class="fas fa-ambulance"></i>
-                <h3>Ambulance</h3>
-                <p>102 / 108</p>
-            </div>
-            <div class="emergency-card disaster">
-                <i class="fas fa-exclamation-triangle"></i>
-                <h3>Disaster Management</h3>
-                <p>1070 / 1078</p>
-            </div>
+<div class="container main-content">
+    <h2 class="section-title"><i class="fas fa-phone"></i> <%= t.emergency.title %></h2>
+    <div class="emergency-grid">
+        <div class="emergency-card police">
+            <i class="fas fa-shield-alt"></i>
+            <h3><%= t.emergency.police %></h3>
+            <p>100</p>
+        </div>
+        <div class="emergency-card fire">
+            <i class="fas fa-fire-extinguisher"></i>
+            <h3><%= t.emergency.fire %></h3>
+            <p>101</p>
+        </div>
+        <div class="emergency-card ambulance">
+            <i class="fas fa-ambulance"></i>
+            <h3><%= t.emergency.ambulance %></h3>
+            <p>102 / 108</p>
+        </div>
+        <div class="emergency-card disaster">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3><%= t.emergency.disaster %></h3>
+            <p>1070 / 1078</p>
         </div>
     </div>
+</div>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Disaster Alert System</p>
-        </div>
-    </footer>
+<%- include('partials/footer') %>
 </body>
 </html>

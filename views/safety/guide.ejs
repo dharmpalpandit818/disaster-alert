@@ -1,67 +1,90 @@
-<div class="container">
-    <div class="guide-header">
-        <i class="fas fa-<%= getIcon(type) %>"></i>
-        <h1><%= type %> <%= t.safety.title %></h1>
-    </div>
-    
-    <div class="guide-content">
-        <div class="guide-phase">
-            <div class="phase-header before">
-                <i class="fas fa-clipboard-check"></i>
+<!DOCTYPE html>
+<html lang="<%= lang %>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= translatedTypeName %> — <%= t.meta.siteTitle %></title>
+    <link rel="shortcut icon" href="https://img.freepik.com/free-vector/globe-fire-melting_78370-7954.jpg?semt=ais_hybrid&w=740&q=80" type="image/x-icon">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+<div class="container main-content safety-guide-page">
+    <header class="safety-guide-hero">
+        <div class="safety-guide-hero-media">
+            <%- include('../partials/disaster-photo', { disasterType: type, imgClass: 'safety-guide-hero-img' }) %>
+            <div class="safety-guide-hero-overlay" aria-hidden="true"></div>
+        </div>
+        <div class="safety-guide-hero-text">
+            <i class="fas fa-<%= getAlertFaIcon(type) %>" aria-hidden="true"></i>
+            <h1><%= translatedTypeName %> — <%= t.safety.guideHeading %></h1>
+        </div>
+    </header>
+
+    <div class="safety-guide-grid">
+        <article class="safety-phase-card safety-phase-before">
+            <div class="safety-phase-card-head">
+                <div class="safety-phase-icon-wrap" aria-hidden="true">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div class="safety-phase-head-img">
+                    <img src="https://media.istockphoto.com/id/1452316636/photo/paramedics-taking-patient-on-stretcher-from-ambulance-to-hospital.webp?a=1&b=1&s=612x612&w=0&k=20&c=-ow6XMHnCLt2zs88LI0vZ7wNvPAM1rAnNdDvbtbE-QE=" alt="" loading="lazy" decoding="async" width="480" height="200"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1469577010204-10a251a5e7a4?w=480&q=75&auto=format&fit=crop'">
+                </div>
                 <h2><%= t.safety.before %></h2>
             </div>
-            <div class="phase-content">
-                <%- formatContent(guide.content.before[lang] || guide.content.before.en) %>
+            <div class="safety-phase-card-body">
+                <ul class="safety-phase-list">
+                    <% guide.before.forEach(function(item) { %>
+                        <li><i class="fas fa-circle-check phase-li-icon" aria-hidden="true"></i><span><%= item %></span></li>
+                    <% }); %>
+                </ul>
             </div>
-        </div>
-        
-        <div class="guide-phase">
-            <div class="phase-header during">
-                <i class="fas fa-running"></i>
+        </article>
+        <article class="safety-phase-card safety-phase-during">
+            <div class="safety-phase-card-head">
+                <div class="safety-phase-icon-wrap" aria-hidden="true">
+                    <i class="fas fa-running"></i>
+                </div>
+                <div class="safety-phase-head-img">
+                    <img src="https://media.istockphoto.com/id/658516626/photo/businessman-burying-his-head-uner-a-laptop-asking-for-help.jpg?s=612x612&w=0&k=20&c=9NRtB7xhdHjwLPMm3DB3iuzvR55vKpyLKnhuFCsbelQ=" alt="" loading="lazy" decoding="async" width="480" height="200"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1469577010204-10a251a5e7a4?w=480&q=75&auto=format&fit=crop'">
+                </div>
                 <h2><%= t.safety.during %></h2>
             </div>
-            <div class="phase-content">
-                <%- formatContent(guide.content.during[lang] || guide.content.during.en) %>
+            <div class="safety-phase-card-body">
+                <ul class="safety-phase-list">
+                    <% guide.during.forEach(function(item) { %>
+                        <li><i class="fas fa-bolt phase-li-icon" aria-hidden="true"></i><span><%= item %></span></li>
+                    <% }); %>
+                </ul>
             </div>
-        </div>
-        
-        <div class="guide-phase">
-            <div class="phase-header after">
-                <i class="fas fa-hands-helping"></i>
+        </article>
+        <article class="safety-phase-card safety-phase-after">
+            <div class="safety-phase-card-head">
+                <div class="safety-phase-icon-wrap" aria-hidden="true">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <div class="safety-phase-head-img">
+                    <img src="https://cdn.satelliteco.com/wp-content/uploads/2020/09/satellite-what-do-do-after-disaster.webp" alt="" loading="lazy" decoding="async" width="480" height="200"
+                         onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1469577010204-10a251a5e7a4?w=480&q=75&auto=format&fit=crop'">
+                </div>
                 <h2><%= t.safety.after %></h2>
             </div>
-            <div class="phase-content">
-                <%- formatContent(guide.content.after[lang] || guide.content.after.en) %>
+            <div class="safety-phase-card-body">
+                <ul class="safety-phase-list">
+                    <% guide.after.forEach(function(item) { %>
+                        <li><i class="fas fa-heart phase-li-icon" aria-hidden="true"></i><span><%= item %></span></li>
+                    <% }); %>
+                </ul>
             </div>
-        </div>
+        </article>
     </div>
-    
-    <a href="/safety" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> All Guides
-    </a>
+    <a href="/safety" class="btn btn-secondary guide-back"><i class="fas fa-arrow-left"></i> <%= t.safety.allGuides %></a>
 </div>
 
-<% 
-function getIcon(type) {
-    const icons = {
-        'Flood': 'water',
-        'Earthquake': 'house-damage',
-        'Cyclone': 'wind',
-        'Fire': 'fire',
-        'Landslide': 'mountain',
-        'Heatwave': 'temperature-high',
-        'Tsunami': 'water-rise'
-    };
-    return icons[type] || 'exclamation-circle';
-}
-
-function formatContent(text) {
-    if (!text) return '';
-    return text.split('\n').map(line => {
-        if (line.trim().startsWith('•')) {
-            return `<li>${line.trim().substring(1).trim()}</li>`;
-        }
-        return `<p>${line}</p>`;
-    }).join('').replace(/<li>/, '<ul><li>').replace(/<\/li>$/, '</li></ul>');
-}
-%>
+<%- include('../partials/footer') %>
+</body>
+</html>

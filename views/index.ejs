@@ -3,189 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disaster Alert System</title>
-
+    <title><%= t.meta.siteTitle %></title>
+    <link rel="shortcut icon" href="https://img.freepik.com/free-vector/globe-fire-melting_78370-7954.jpg?semt=ais_hybrid&w=740&q=80" type="image/x-icon">
     <link rel="stylesheet" href="/css/style.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
+<%- include('partials/navbar') %>
 
-<!-- Navbar -->
-
-<nav class="navbar">
-    <div class="container">
-
-        <a href="/" class="logo">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span>DisasterAlert</span>
-        </a>
-
-        <div class="nav-links">
-            <a href="/" class="active"><i class="fas fa-home"></i> Home</a>
-            <a href="/alerts"><i class="fas fa-bell"></i> Alerts</a>
-            <a href="/safety"><i class="fas fa-shield-alt"></i> Safety</a>
-            <a href="/subscribe"><i class="fas fa-envelope"></i> Subscribe</a>
+<section class="hero-section">
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="container hero-inner">
+        <p class="hero-eyebrow"><i class="fas fa-shield-halved"></i> <%= t.nav.brand %></p>
+        <h1 class="hero-title"><%= t.home.heroTitle %></h1>
+        <p class="subtitle hero-subtitle"><%= t.home.heroSubtitle %></p>
+        <div class="hero-buttons">
+            <a href="/alerts" class="btn btn-primary btn-hero-primary"><i class="fas fa-bell"></i> <%= t.home.viewAlerts %></a>
+            <a href="/subscribe" class="btn btn-secondary btn-hero-secondary"><i class="fas fa-envelope"></i> <%= t.home.subscribeCta %></a>
         </div>
-
-        <div class="language-selector">
-            <select onchange="window.location.href='/lang/'+this.value">
-
-                <option value="en" <%= lang === 'en' ? 'selected' : '' %>>English</option>
-                <option value="hi" <%= lang === 'hi' ? 'selected' : '' %>>हिन्दी</option>
-                <option value="bn" <%= lang === 'bn' ? 'selected' : '' %>>বাংলা</option>
-                <option value="mr" <%= lang === 'mr' ? 'selected' : '' %>>मराठी</option>
-                <option value="ta" <%= lang === 'ta' ? 'selected' : '' %>>தமிழ்</option>
-                <option value="te" <%= lang === 'te' ? 'selected' : '' %>>తెలుగు</option>
-
-            </select>
-        </div>
-
     </div>
-</nav>
-
-
-<!-- Hero Section -->
-
-<section class="hero">
-
-    <div class="container">
-
-        <h1>Stay Safe from Natural Disasters</h1>
-
-        <p>
-            Get real time alerts and safety instructions
-            for floods, earthquakes, cyclones and more.
-        </p>
-
-        <a href="/alerts" class="btn btn-primary">
-            <i class="fas fa-bell"></i> View Alerts
-        </a>
-
-    </div>
-
 </section>
-
-
-
-<!-- Latest Alerts -->
 
 <section class="alerts-section">
-
-<div class="container">
-
-<h2>Latest Alerts</h2>
-
-<div class="alerts-grid">
-
-<% if(alerts && alerts.length > 0){ %>
-
-<% alerts.forEach(function(alert){ %>
-
-<div class="alert-card <%= alert.severity %>">
-
-<h3><%= alert.title %></h3>
-
-<p><%= alert.description %></p>
-
-<span class="location">
-<i class="fas fa-map-marker-alt"></i>
-<%= alert.location %>
-</span>
-
-</div>
-
-<% }) %>
-
-<% } else { %>
-
-<p>No alerts available</p>
-
-<% } %>
-
-</div>
-
-</div>
-
+    <div class="container">
+        <h2 class="section-heading"><%= t.home.latestAlerts %></h2>
+        <div class="alerts-grid">
+            <% if (alerts && alerts.length > 0) { %>
+                <% alerts.forEach(function(alert) { %>
+                    <% var sev = String(alert.severity || '').toLowerCase(); %>
+                    <a href="/alerts/<%= alert._id %>" class="alert-card <%= sev %>">
+                        <div class="alert-card-media">
+                            <%- include('partials/disaster-photo', { disasterType: alert.type, imgClass: '' }) %>
+                            <span class="alert-card-badge <%= sev %>"><%= alert.severity %></span>
+                        </div>
+                        <div class="alert-card-body">
+                            <h3><%= alert.title %></h3>
+                            <p class="alert-card-desc"><%= alert.description %></p>
+                            <div class="alert-meta location"><i class="fas fa-map-marker-alt"></i> <%= alert.location %></div>
+                            <span class="alert-card-cta"><%= t.alerts.details %> <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </a>
+                <% }); %>
+            <% } else { %>
+                <p class="empty-inline"><%= t.home.noAlerts %></p>
+            <% } %>
+        </div>
+    </div>
 </section>
-
-
-
-<!-- Safety Guides -->
 
 <section class="safety-section">
-
-<div class="container">
-
-<h2>Safety Guides</h2>
-
-<div class="safety-grid">
-
-<a href="/safety/flood" class="guide-card">
-<i class="fas fa-water"></i>
-<h3>Flood</h3>
-</a>
-
-<a href="/safety/earthquake" class="guide-card">
-<i class="fas fa-house-crack"></i>
-<h3>Earthquake</h3>
-</a>
-
-<a href="/safety/fire" class="guide-card">
-<i class="fas fa-fire"></i>
-<h3>Fire</h3>
-</a>
-
-<a href="/safety/cyclone" class="guide-card">
-<i class="fas fa-wind"></i>
-<h3>Cyclone</h3>
-</a>
-
-</div>
-
-</div>
-
+    <div class="container">
+        <h2 class="section-heading"><%= t.home.safetyTitle %></h2>
+        <div class="safety-grid home-safety-grid">
+            <a href="/safety/Flood" class="guide-card flood">
+                <%- include('partials/disaster-photo', { disasterType: 'Flood', imgClass: 'guide-card-thumb' }) %>
+                <i class="fas fa-water" aria-hidden="true"></i>
+                <h3><%= t.home.flood %></h3>
+            </a>
+            <a href="/safety/Earthquake" class="guide-card earthquake">
+                <%- include('partials/disaster-photo', { disasterType: 'Earthquake', imgClass: 'guide-card-thumb' }) %>
+                <i class="fas fa-house-crack" aria-hidden="true"></i>
+                <h3><%= t.home.earthquake %></h3>
+            </a>
+            <a href="/safety/Fire" class="guide-card fire">
+                <%- include('partials/disaster-photo', { disasterType: 'Fire', imgClass: 'guide-card-thumb' }) %>
+                <i class="fas fa-fire" aria-hidden="true"></i>
+                <h3><%= t.home.fire %></h3>
+            </a>
+            <a href="/safety/Cyclone" class="guide-card cyclone">
+                <%- include('partials/disaster-photo', { disasterType: 'Cyclone', imgClass: 'guide-card-thumb' }) %>
+                <i class="fas fa-wind" aria-hidden="true"></i>
+                <h3><%= t.home.cyclone %></h3>
+            </a>
+        </div>
+    </div>
 </section>
-
-
-
-<!-- Subscribe Section -->
 
 <section class="subscribe-section">
-
-<div class="container">
-
-<h2>Get Emergency Alerts</h2>
-
-<p>Subscribe to receive alerts by email</p>
-
-<a href="/subscribe" class="btn btn-primary">
-<i class="fas fa-envelope"></i> Subscribe Now
-</a>
-
-</div>
-
+    <div class="container subscribe-strip">
+        <h2 class="section-heading"><%= t.home.subscribeTitle %></h2>
+        <p class="subscribe-strip-text"><%= t.home.subscribeText %></p>
+        <a href="/subscribe" class="btn btn-primary"><i class="fas fa-envelope"></i> <%= t.home.subscribeCta %></a>
+    </div>
 </section>
 
-
-
-<!-- Footer -->
-
-<footer class="footer">
-
-<div class="container">
-
-<p>© 2024 Disaster Alert System | Stay Safe</p>
-
-<a href="/emergency">
-<i class="fas fa-phone"></i> Emergency Contacts
-</a>
-
-</div>
-
-</footer>
-
-
+<%- include('partials/footer') %>
 </body>
 </html>

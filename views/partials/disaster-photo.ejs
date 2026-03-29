@@ -1,0 +1,18 @@
+<%
+var disasterType = typeof disasterType !== 'undefined' ? disasterType : '';
+var DISASTER_IMG = {
+  Flood: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&h=500&fit=crop&q=80',
+  Fire: 'https://images.unsplash.com/photo-1497906539264-eb74442e37a9?w=800&h=500&fit=crop&q=80',
+  Earthquake: 'https://images.unsplash.com/photo-1677233860259-ce1a8e0f8498?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  Cyclone: 'https://images.unsplash.com/photo-1527482797697-8795b05a13fe?w=800&h=500&fit=crop&q=80',
+  Landslide: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=500&fit=crop&q=80',
+  Heatwave: 'https://images.unsplash.com/photo-1504386106331-3e4e71712b38?w=640&q=75&auto=format&fit=crop',
+  Tsunami: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&h=500&fit=crop&q=80',
+  Other: 'https://media.istockphoto.com/id/1263562386/photo/beautifully-structured-thunderstorm-in-bulgarian-plains.jpg?s=1024x1024&w=is&k=20&c=6y2CMbbSmyo_ZI6HlD25TNF_M93Qt_odD1Jse0FWNZQ='
+};
+var fallback = 'https://unsplash.com/photos/a-black-and-white-photo-of-a-city-PYgCc3p_MCA';
+var src = DISASTER_IMG[disasterType] || fallback;
+var _cls = typeof imgClass !== 'undefined' && imgClass ? String(imgClass) : 'disaster-photo-img';
+%>
+<img class="<%= _cls %>" src="<%= src %>" alt="" loading="lazy" decoding="async" width="640" height="400"
+     onerror="this.onerror=null;this.src='<%= fallback %>'">

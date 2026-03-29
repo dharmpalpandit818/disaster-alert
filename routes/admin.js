@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Alert = require('../models/Alert');
 const Subscriber = require('../models/Subscriber');
+const { broadcastAlert } = require('../utils/notifications'); // ✅ ADD THIS
 const { requireAuth, redirectIfAuth } = require('../middleware/auth');
 
 // Redirect /admin to /admin/login
@@ -70,7 +71,7 @@ router.get('/alerts/create', requireAuth, (req, res) => {
   });
 });
 
-// Handle create alert
+// 🔥 HANDLE CREATE ALERT (UPDATED)
 router.post('/alerts/create', requireAuth, async (req, res) => {
   try {
     const alert = new Alert({
@@ -84,7 +85,15 @@ router.post('/alerts/create', requireAuth, async (req, res) => {
     });
 
     await alert.save();
+
+    // 🔥 SEND NOTIFICATIONS
+    const subscribers = await Subscriber.find();
+    await broadcastAlert(alert, subscribers);
+
+    console.log("🚀 Notifications sent to subscribers");
+
     res.redirect('/admin/alerts');
+
   } catch (error) {
     res.render('admin/alert-form', { 
       alert: req.body,
@@ -126,6 +135,7 @@ router.post('/alerts/edit/:id', requireAuth, async (req, res) => {
     
     await alert.save();
     res.redirect('/admin/alerts');
+
   } catch (error) {
     res.render('admin/alert-form', { 
       alert: req.body,

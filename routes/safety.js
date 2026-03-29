@@ -1,8 +1,11 @@
+
+
+const { translateText } = require('../utils/translation');
 const express = require('express');
 const router = express.Router();
-const translations = require('../utils/translations');
 
 // Safety data function
+
 function getSafetyData(type) {
     const content = {
         Flood: {
@@ -199,33 +202,44 @@ function getSafetyData(type) {
     return content[type] || content.Flood;
 }
 
-// Safety guides index
 router.get('/', (req, res) => {
-  const lang = req.session.lang || 'en';
-  res.render('safety/index', {
-    lang,
-    t: translations[lang] || translations.en
-  });
+  const disasterTypes = [
+    'Flood',
+    'Earthquake',
+    'Cyclone',
+    'Fire',
+    'Landslide',
+    'Heatwave',
+    'Tsunami'
+  ];
+  res.render('safety/index', { disasterTypes });
 });
 
-// Specific guide
-router.get('/:type', (req, res) => {
-  const lang = req.session.lang || 'en';
+router.get('/:type', async (req, res) => {
+  const lang = res.locals.lang;
   const type = req.params.type;
+
   const validTypes = ['Flood', 'Earthquake', 'Cyclone', 'Fire', 'Landslide', 'Heatwave', 'Tsunami'];
-  
+
   if (!validTypes.includes(type)) {
     return res.redirect('/safety');
   }
 
   const safetyData = getSafetyData(type);
 
+  const translatedData = {
+    before: await Promise.all(safetyData.before.map((item) => translateText(item, lang))),
+    during: await Promise.all(safetyData.during.map((item) => translateText(item, lang))),
+    after: await Promise.all(safetyData.after.map((item) => translateText(item, lang))),
+    icon: safetyData.icon
+  };
+
+  const translatedTypeName = await translateText(type, lang);
+
   res.render('safety/guide', {
     type,
-    lang,
-    t: translations[lang] || translations.en,
-    safetyData: safetyData
+    guide: translatedData,
+    translatedTypeName
   });
 });
-
 module.exports = router;
