@@ -3,6 +3,7 @@ const router = express.Router();
 const Alert = require('../models/Alert');
 const Subscriber = require('../models/Subscriber');
 const { broadcastAlert } = require('../utils/notifications'); // ✅ ADD THIS
+// const { sendNotifications } = require('../utils/notifications');
 const { requireAuth, redirectIfAuth } = require('../middleware/auth');
 
 // Redirect /admin to /admin/login
@@ -89,6 +90,8 @@ router.post('/alerts/create', requireAuth, async (req, res) => {
     // 🔥 SEND NOTIFICATIONS
     const subscribers = await Subscriber.find();
     await broadcastAlert(alert, subscribers);
+    // const { sendNotifications } = require('../utils/notifications');
+    // await sendNotifications(alert);
 
     console.log("🚀 Notifications sent to subscribers");
 

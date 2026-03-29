@@ -17,21 +17,21 @@ function authLocals(req) {
 }
 
 router.get('/login', (req, res) => {
-  if (req.session.userId) return res.redirect('/');
+  if (req.session.userId) return res.redirect('/home');
   const err = req.session.authError;
   delete req.session.authError;
   res.render('auth/login', {
     ...authLocals(req),
     error: err,
-    returnTo: req.query.returnTo || '/'
+    returnTo: req.query.returnTo || '/home'
   });
 });
 
 router.post('/login', async (req, res) => {
-  if (req.session.userId) return res.redirect('/');
+  if (req.session.userId) return res.redirect('/home');
   const { t } = authLocals(req);
   const { email, password } = req.body;
-  const returnTo = req.body.returnTo || '/';
+  const returnTo = req.body.returnTo || '/home';
 
   try {
     const user = await User.findOne({ email: (email || '').toLowerCase().trim() });
@@ -45,7 +45,7 @@ router.post('/login', async (req, res) => {
     }
     req.session.userId = user._id.toString();
     req.session.lang = user.preferredLanguage || 'en';
-    const safe = returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/';
+    const safe = returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : '/home';
     res.redirect(safe);
   } catch (e) {
     console.error(e);
@@ -55,7 +55,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/register', (req, res) => {
-  if (req.session.userId) return res.redirect('/');
+  if (req.session.userId) return res.redirect('/home');
   res.render('auth/register', {
     ...authLocals(req),
     error: null,
@@ -64,7 +64,7 @@ router.get('/register', (req, res) => {
 });
 
 router.post('/register', async (req, res) => {
-  if (req.session.userId) return res.redirect('/');
+  if (req.session.userId) return res.redirect('/home');
   const { t } = authLocals(req);
   const { name, email, password, confirmPassword, phone, preferredLanguage } = req.body;
 
@@ -102,7 +102,7 @@ router.post('/register', async (req, res) => {
     });
     req.session.userId = user._id.toString();
     req.session.lang = plang;
-    res.redirect('/');
+    res.redirect('/home');
   } catch (e) {
     console.error(e);
     renderErr(t.auth.errorGeneric);
@@ -111,7 +111,7 @@ router.post('/register', async (req, res) => {
 
 router.get('/logout', (req, res) => {
   delete req.session.userId;
-  res.redirect('/');
+  res.redirect('/auth/login');
 });
 
 module.exports = router;

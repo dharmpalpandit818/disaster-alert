@@ -18,6 +18,23 @@ const authRoutes = require('./routes/auth');
 
 const app = express();
 
+const requiredDeployVars = [
+  'MONGODB_URI',
+  'SESSION_SECRET',
+  'EMAIL_HOST',
+  'EMAIL_PORT',
+  'EMAIL_USER',
+  'EMAIL_PASS',
+  'TWILIO_ACCOUNT_SID',
+  'TWILIO_AUTH_TOKEN',
+  'TWILIO_PHONE_NUMBER'
+];
+
+const missingDeployVars = requiredDeployVars.filter((k) => !process.env[k]);
+if (missingDeployVars.length) {
+  console.warn('Missing env vars:', missingDeployVars.join(', '));
+}
+
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/disaster_alerts')
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB error:', err));
@@ -88,6 +105,12 @@ app.get('/lang/:code', async (req, res) => {
 
 app.use('/admin', adminRoutes);
 app.use('/auth', authRoutes);
+app.get('/', (req, res) => {
+  if (req.session && req.session.userId) {
+    return res.redirect('/home');
+  }
+  return res.redirect('/auth/login');
+});
 app.use('/', indexRoutes);
 app.use('/alerts', alertRoutes);
 app.use('/safety', safetyRoutes);

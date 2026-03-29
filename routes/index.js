@@ -3,8 +3,9 @@ const router = express.Router();
 const Alert = require('../models/Alert');
 const Subscriber = require('../models/Subscriber');
 const { translateText } = require('../utils/translation');
+const { requireUserAuth } = require('../middleware/auth');
 
-router.get('/', async (req, res) => {
+async function renderHome(req, res) {
   const lang = res.locals.lang || req.session.lang || 'en';
   const t = res.locals.t;
 
@@ -35,12 +36,14 @@ router.get('/', async (req, res) => {
         };
       })
     );
-    res.render('index', { alerts, lang, t });
+    return res.render('index', { alerts, lang, t });
   } catch (error) {
     console.error(error);
-    res.render('index', { alerts: [], lang, t });
+    return res.render('index', { alerts: [], lang, t });
   }
-});
+}
+
+router.get('/home', requireUserAuth, renderHome);
 
 router.get('/subscribe', (req, res) => {
   res.render('subscribe', { message: null, lang: res.locals.lang, t: res.locals.t });

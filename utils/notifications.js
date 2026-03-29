@@ -73,6 +73,7 @@ const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || 'smtp.gmail.com',
   port: Number(process.env.EMAIL_PORT) || 587,
   secure: false,
+  tls: { rejectUnauthorized: false },
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
@@ -82,6 +83,9 @@ const transporter = nodemailer.createTransport({
 const twilioClient = process.env.TWILIO_ACCOUNT_SID
   ? twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
   : null;
+
+console.log('EMAIL:', process.env.EMAIL_USER || 'missing');
+console.log('TWILIO:', process.env.TWILIO_ACCOUNT_SID || 'missing');
 
 async function sendEmailAlert(alert, subscriber) {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
@@ -158,9 +162,13 @@ ${labels.staySafe}
     const raw = subscriber.phone.trim();
     const phone = raw.startsWith('+') ? raw : `+${raw.replace(/^\+/, '')}`;
 
+    const fromNumber = process.env.TWILIO_PHONE_NUMBER.startsWith('whatsapp:')
+      ? process.env.TWILIO_PHONE_NUMBER
+      : `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`;
+
     const response = await twilioClient.messages.create({
       body: message,
-      from: process.env.TWILIO_PHONE_NUMBER,
+      from: fromNumber,
       to: `whatsapp:${phone}`
     });
 

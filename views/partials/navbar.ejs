@@ -1,21 +1,15 @@
 <nav class="navbar">
     <div class="container navbar-inner">
-
-        <a href="/" class="logo">
+        <a href="<%= currentUser ? '/home' : '/auth/login' %>" class="logo">
             <i class="fas fa-exclamation-triangle"></i>
             <span><%= t.nav.brand %></span>
         </a>
 
-        <!-- Hamburger -->
-        <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-
-        <div class="menu-overlay" onclick="toggleMenu()"></div>
+        <button class="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navLinks">☰</button>
+        <div class="menu-overlay"></div>
 
         <div class="nav-links sidebar" id="navLinks">
-
-        <!-- ✅ nav-links (id added) -->
-        <div class="nav-links" id="navLinks">
-            <a href="/" class="<%= currentPath === '/' ? 'active' : '' %>"><i class="fas fa-home"></i> <%= t.nav.home %></a>
+            <a href="/home" class="<%= currentPath === '/home' || currentPath === '/' ? 'active' : '' %>"><i class="fas fa-home"></i> <%= t.nav.home %></a>
             <a href="/alerts" class="<%= (typeof currentPath === 'string' && currentPath.startsWith('/alerts')) ? 'active' : '' %>"><i class="fas fa-bell"></i> <%= t.nav.alerts %></a>
             <a href="/safety" class="<%= (typeof currentPath === 'string' && currentPath.startsWith('/safety')) ? 'active' : '' %>"><i class="fas fa-shield-alt"></i> <%= t.nav.safety %></a>
             <a href="/subscribe" class="<%= currentPath === '/subscribe' ? 'active' : '' %>"><i class="fas fa-envelope"></i> <%= t.nav.subscribe %></a>
@@ -41,13 +35,28 @@
     </div>
 </nav>
 
-<!-- ✅ JavaScript -->
 <script>
-function toggleMenu() {
-  const nav = document.getElementById("navLinks");
-  const overlay = document.querySelector(".menu-overlay");
+  (function () {
+    const nav = document.getElementById('navLinks');
+    const toggle = document.querySelector('.menu-toggle');
+    const overlay = document.querySelector('.menu-overlay');
+    if (!nav || !toggle || !overlay) return;
 
-  nav.classList.toggle("active");
-  overlay.classList.toggle("active");
-}
+    const closeMenu = function () {
+      nav.classList.remove('active');
+      overlay.classList.remove('active');
+      toggle.setAttribute('aria-expanded', 'false');
+    };
+
+    toggle.addEventListener('click', function () {
+      const isOpen = nav.classList.toggle('active');
+      overlay.classList.toggle('active', isOpen);
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    overlay.addEventListener('click', closeMenu);
+    nav.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', closeMenu);
+    });
+  })();
 </script>
