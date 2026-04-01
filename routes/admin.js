@@ -87,13 +87,11 @@ router.post('/alerts/create', requireAuth, async (req, res) => {
 
     await alert.save();
 
-    // 🔥 SEND NOTIFICATIONS
+    // 🔥 SEND NOTIFICATIONS in the BACKGROUND
     const subscribers = await Subscriber.find();
-    await broadcastAlert(alert, subscribers);
-    // const { sendNotifications } = require('../utils/notifications');
-    // await sendNotifications(alert);
+    broadcastAlert(alert, subscribers).catch(err => console.error("Broadcast failed:", err));
 
-    console.log("🚀 Notifications sent to subscribers");
+    console.log("🚀 Notifications broadcast started in background...");
 
     res.redirect('/admin/alerts');
 
