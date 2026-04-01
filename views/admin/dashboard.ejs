@@ -56,7 +56,7 @@
                             <td><%= alert.title %></td>
                             <td><%= alert.type %></td>
                             <td><%= alert.severity %></td>
-                            <td><%= alert.createdAt.toLocaleDateString() %></td>
+                            <td><%= alert.createdAt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }) %></td>
                         </tr>
                     <% }); %>
                 <% } else { %>

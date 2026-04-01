@@ -33,7 +33,7 @@
                             <div class="alert-meta">
                                 <span><i class="fas fa-<%= getAlertFaIcon(alert.type) %>"></i> <%= alert.type %></span>
                                 <span><i class="fas fa-map-marker-alt"></i> <%= alert.location %></span>
-                                <span><i class="fas fa-clock"></i> <%= alert.createdAt.toLocaleDateString() %></span>
+                                <span><i class="fas fa-clock"></i> <%= alert.createdAt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' }) %></span>
                             </div>
                             <p class="alert-item-desc"><%= alert.description %></p>
                         </div>
